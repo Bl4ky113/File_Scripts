@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if pgrep -x "pactray" > /dev/null
+then
+    pkill pactray
+else
+    pactray &
+fi

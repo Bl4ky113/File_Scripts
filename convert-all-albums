@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echo "Converting All Music Albums to Mp3"
+cd ~/Music/
+
+CONVERTED_ALBUMS=`ls ~/Music/.mp3`
+
+for MUSIC_ALBUM in `ls ~/Music`; do
+    if ! [[ $CONVERTED_ALBUMS =~ (^|[[:space:]])$MUSIC_ALBUM($|[[:space:]]) ]]; then
+        echo -e "Converting $MUSIC_ALBUM\n"
+        cd $MUSIC_ALBUM
+        convert-to-mp3
+        echo -e "Done Converting $MUSIC_ALBUM\n"
+        cd ~/Music/
+    else
+        echo "Skiping $MUSIC_ALBUM. Already Converted"
+        echo -e "If You want to Re-Convert The Album, do it with \"convert-to-mp3\"\n"
+    fi
+done

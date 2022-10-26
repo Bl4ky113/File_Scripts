@@ -1,0 +1,47 @@
+#!/bin/bash
+
+ALBUM_NAME=`basename $(pwd)`
+MP3_ALBUM=../.mp3/$ALBUM_NAME
+
+echo "Current Album"
+echo -e "~/Music/"$ALBUM_NAME"\n"
+echo "Mp3 Album"
+echo -e "~/Music/.mp3/"$ALBUM_NAME"\n"
+echo "Tar.Gz Compressed Mp3 Album"
+echo -e "~/Music/.tar/"$ALBUM_NAME".tar.gz\n"
+
+echo "Check Mp3 Album"
+if ! [ -d $MP3_ALBUM ]; then
+    mkdir $MP3_ALBUM
+    echo "Created "$MP3_ALBUM
+else
+    echo $MP3_ALBUM" Already Exists. Deleting Content"
+    ls $MP3_ALBUM
+    rm -fr $MP3_ALBUM
+    mkdir $MP3_ALBUM
+fi
+
+echo "Converting Album to Mp3"
+for FILE in *.flac; do
+    ffmpeg -i $FILE -aq 3 $FILE.mp3
+done
+
+echo "Moving Mp3 Files to Mp3 Album"
+mv -v *.mp3 $MP3_ALBUM
+
+echo "Checking Tar.Gz Compressed Mp3 Album"
+if [ -e ../.tar/$ALBUM_NAME.tar.gz ]; then
+    echo "Compressed Mp3 Album Already Exists. Deleting"
+    rm ../.tar/$ALBUM_NAME.tar.gz
+fi
+
+echo "Compressing Mp3 Album"
+cd $MP3_ALBUM
+tar -cvzf "$ALBUM_NAME.tar.gz" *.mp3
+mv "$ALBUM_NAME.tar.gz" ../../.tar/
+
+echo "Complete!!!"
+cd ~/Music/$ALBUM_NAME/
+ls -lah .
+ls -lah ../.mp3/$ALBUM_NAME
+ls -lah ../.tar/$ALBUM_NAME.tar.gz

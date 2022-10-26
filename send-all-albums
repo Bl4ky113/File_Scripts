@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# $1: SSH IP
+# $2: SSH IP Port
+# $3: SSH USER
+# $4: SSH URI
+# $5: devive name
+
+SSH_IP=$1
+SSH_PORT=22
+SSH_USER=$3
+SSH_URI=$4
+DEVICE_NAME=$5
+SENT_ALBUMS=~/Music/.tar/.sent_album_list/$DEVICE_NAME
+ALBUM_LIST=`ls ~/Music/.tar/`
+
+if [ -z $1 ]; then
+    echo "Error: Device IP Missing"
+    exit 1
+fi
+
+if [ -z $2 ]; then
+    echo "Using Default SSH IP Port"
+else
+    SSH_PORT=$2
+fi
+
+if [ -z $3 ]; then 
+    echo "Error: Device User Missing"
+    exit 1
+fi
+
+if [ -z $4 ]; then
+    echo "Error: Device Name Missing"
+    exit 1
+fi
+
+if [ -z $5 ]; then
+    echo "Error: Device Music Folder URI Missing"
+    exit 1
+fi
+
+if [ -e $DEVICE_LIST ]; then
+    echo -e "Already Sent Albums list\n"
+    cat ~/Music/.tar/.sent_album_list/$DEVICE
+else
+    echo "Making Sent Albums list"
+    touch ~/Music/.tar/.sent_album_list/$DEVICE
+fi
+
+echo "Making Album list"
+
+cd ~/Music/.tar/
+
+echo "$ALBUM_LIST" > .album_list
+
+if [ -e send_list.tar ] || [ -e send_list.tar.gz ]; then
+    rm send_list*
+fi
+
+ALBUMS_TO_SEND=`comm -3 .album_list .sent_album_list/$DEVICE`
+
+tar -cf send_list.tar -T /dev/null
+
+for ALBUM in ALBUMS_TO_SEND
+do
+    tar -rf send_list.tar $ALBUM
+done
+
+gzip -9 send_list.tar
+
+echo "Sending Album List"
+echo $ALBUMS_TO_SEND
+
+cd ~/Music/.tar/
+
+scp -P $SSH_PORT send_list.tar.gz $SSH_USER@$SSH_IP:$SSH_URI
+
+echo "Updating Sent Album List"
+
+echo $ALBUMS_TO_SEND >> $ALBUM_LIST
+
+echo "New Album List"
+cat "$SENT_ALBUMS"
+rm send_list.tar.gz

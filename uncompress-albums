@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# $1 Tar.Gz File
+
+TAR_FILE=$1
+TAR_CONTENT=`tar -tf $TAR_FILE`
+
+mkdir tar_content
+cd tar_content
+
+tar -xf ../$TAR_FILE
+
+for ALBUM_TAR in *.tar.gz
+do
+    ALBUM_NAME=`basename $ALBUM_TAR .tar.gz`
+
+    mkdir $ALBUM_NAME
+    cd $ALBUM_NAME
+
+    tar -xf ../$ALBUM_TAR
+
+    cd ..
+done
