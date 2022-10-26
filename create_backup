@@ -1,0 +1,110 @@
+#!/bin/bash
+# Made By Bl4ky113 / @bl4ky113
+
+# projects/...
+# courses/...
+# work/...
+# degrees/...
+# .local/
+#       bin/
+#       .../Starbound/storage
+# .config/
+#       nvim/
+#       cmus/
+#       openbox/
+#       synth_shell/
+#       tint2/
+#       redshift.conf
+# .icons/...
+# .fonts/...
+# .themes/...
+# synth_shell/...
+# Pictures/...
+# Documents/...
+# .vimrc
+
+BACKUP_NAME="bl4ky_backup_`date +%D`.tar"
+
+tar -cf $BACKUP_NAME /dev/null
+
+echo "Backing Up Projects"
+tar -cf projects_backup.tar /dev/null
+for PROJECT in ~/projects/*
+do
+    tar -cvzf $PROJECT.tar.gz $PROJECT
+    tar -rvf projects_backup.tar $PROJECT.tar.gz
+    rm PROJECT.tar.gz
+done
+gzip -9 projects_backup.tar
+tar -rvf $BACKUP_NAME projects_backup.tar.gz
+rm projects_backup.tar
+
+echo "Backing Up Courses"
+tar -cf courses_backup.tar /dev/null
+for COURSE in ~/courses/*
+do
+    tar -cvzf $COURSE.tar.gz $COURSE
+    tar -rvf courses_backup.tar $COURSE.tar.gz
+done
+gzip -9 courses_backup.tar
+tar -rvf $BACKUP_NAME courses_backup.tar.gz
+rm courses_backup.tar.gz
+
+echo "Backing Up Work Folders"
+tar -cf work_backup.tar /dev/null
+for WORK_FOLDER in ~/work/*
+do
+    tar -cvzf $WORK_FOLDER.tar.gz $WORK_FOLDER
+    tar -rvf work_backup.tar $WORK_FOLDER.tar.gz
+done
+gzip -9 work_backup.tar
+tar -rvf $BACKUP_NAME work_backup.tar.gz
+rm work_backup.tar.gz
+
+echo "Backing Up Degrees"
+tar -cvf degrees_backup.tar ~/degrees/
+gzip -9 courses_backup.tar
+tar -rvf $BACKUP_NAME courses_backup.tar.gz
+rm courses_backup.tar.gz
+
+echo "Backing Up .local custom bin"
+tar -cvf local_bins.tar ~/.local/bin/
+gzip -9 local_bins.tar
+tar -rvf $BACKUP_NAME local_bins.tar.gz
+
+echo "Backing Up Starbound Data"
+rm ~/.local/share/Steam/steamapps/common/Starbound/starbound.log*
+tar -cvf starbound_universe.tar ~/.local/share/Steam/steamapps/common/Starbound/storage/
+gzip -9 starbound_universe.tar
+tar -rvf $BACKUP_NAME starbound_universe.tar.gz
+
+echo "Backing Up Configs"
+CONFIG_FOLDERS=("nvim", "cmus", "openbox", "tint2", "synth_shell", "redshift.conf")
+for FOLDER in $CONFIG_FOLDERS
+do
+    tar -cvzf $FOLDER.tar.gz ~/.config/$FOLDER
+    tar -rvf $BACKUP_NAME $FOLDER.tar.gz
+    rm $FOLDER.tar.gz
+done
+tar -cvzf vimrc.tar.gz ~/.vimrc
+tar -rvf $BACKUP_NAME vimrc.tar.gz
+rm vimrc.tar.gz
+
+echo "Backing Up Custom Icons Fonts and Themes"
+VISUALS_FOLDERS=(".icons", ".fonts", ".themes")
+for FOLDER in $VISUALS_FOLDERS
+do
+    tar -cvzf $FOLDER.tar.gz ~/$FOLDER
+    tar -rvf $BACKUP_NAME $FOLDER.tar.gz
+    rm $FOLDER.tar.gz
+done
+
+echo "Backing Up General Folders"
+
+GENERAL_FOLDERS=("synth_shell", "Documents", "Pictures")
+for FOLDER in $GENERAL_FOLDERS
+do
+    tar -cvzf $FOLDER.tar.gz ~/$FOLDER
+    tar -rvf $BACKUP_NAME $FOLDER.tar.gz
+    rm $FOLDER.tar.gz
+done
