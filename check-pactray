@@ -2,7 +2,7 @@
 
 if pgrep -x "pactray" > /dev/null
 then
-    pkill pactray
+    killall pactray
 else
     pactray &
 fi
