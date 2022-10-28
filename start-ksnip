@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+if [ `ls ~/Pictures/screenshots/ | wc -l` -gt 0 ]
+then
+    rm ~/Pictures/screenshots/*
+fi
+
+ksnip &
