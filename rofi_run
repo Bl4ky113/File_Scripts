@@ -90,6 +90,7 @@ else
 				;;
                         -p|--pass)
                                 AVAILABLE_PASSWORDS=""
+
                                 for PASSWORD in `./.password_dir`
                                 do
                                     CLEAN_PASSWORD=$(basename $PASSWORD .gpg)
@@ -98,12 +99,19 @@ else
 
                                 SELECTED_PASSWORD="$(rofi -sep '|' -dmenu -i -p 'Password Manager' -hide-scrollbar <<< $AVAILABLE_PASSWORDS)"
 
+                                if [ $SELECTED_PASSWORD = /dev/null ]
+                                then
+                                    exit 1
+                                fi
+
                                 if ! [ $(echo $SELECTED_PASSWORD | tail -c 4) = "otp" ]
                                 then
                                     pass -c Accounts/$SELECTED_PASSWORD
                                 else
                                     pass otp -c Accounts/$SELECTED_PASSWORD
                                 fi
+
+                                notify-send "Password Copied!" "Copied \"$SELECTED_PASSWORD\" to Clipboard"
                                 ;;
 			*)
 				printf "\nOption does not exist: %s\n\n" "$arg"
